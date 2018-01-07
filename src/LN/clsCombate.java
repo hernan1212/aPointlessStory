@@ -48,6 +48,7 @@ public class clsCombate
 		{
 			pCreep=cr.getProbabilidad();
 			for(int i=0;i<pCreep;i++)
+
 			{
 				a.add(cr.getID());
 			}

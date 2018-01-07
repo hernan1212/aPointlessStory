@@ -10,12 +10,14 @@ public class PJPrincipal
 {
 	private PJPrincipalImg PJ;
 	private boolean movimiento; 
+	public boolean mirandoArriba;
 	private int ContadorPos=0;
 	private String MovSITUACION;
 	private String IntentoMovSITUACION;
 	private ImageIcon a,b;
 	public PJPrincipal() 
 	{
+		mirandoArriba=false;
 		movimiento=false;
 		MovSITUACION="";
 		IntentoMovSITUACION="STOP";
@@ -77,9 +79,11 @@ public class PJPrincipal
 	public void IconUp()
 	{
 		if((b=new ImageIcon(U1)).equals(a)==false)PJ.setIcon(b);
+		mirandoArriba=true;
 	}
 	public void IconDown()
 	{
+		mirandoArriba=false;
 		if(ContadorPos<280)
 		{
 			if((b=new ImageIcon(D1)).equals(a)==false)PJ.setIcon(b);
@@ -98,6 +102,7 @@ public class PJPrincipal
 	}
 	public void IconRight()
 	{
+		mirandoArriba=false;
 		if(ContadorPos<90)
 		{
 			if((b=new ImageIcon(R1)).equals(a)==false)PJ.setIcon(b);
@@ -121,6 +126,7 @@ public class PJPrincipal
 	public void IconLeft()
 	
 	{
+		mirandoArriba=false;
 		if(ContadorPos<90)
 		{
 			if((b=new ImageIcon(L1)).equals(a)==false)PJ.setIcon(b);

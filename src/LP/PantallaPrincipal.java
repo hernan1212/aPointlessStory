@@ -24,13 +24,15 @@ private static final long serialVersionUID = 1L;
 private JPanel PPrincipal;
 private KeyEvent event;
 private ArrayList<Cuadrante> Cuad;
+private KeyListener KL;
 private final int MaxCuad=15;
 private String[][] map;
 private ArrayList<String[]> lineas;
 private ArrayList<clsCreep> Creeps;
 private int maxALTO_PANT=628, maxANCHO_PANT=806,ALTO_PANT=600, ANCHO_PANT=800, cont=0,s=10;
-private boolean Funciona, Funciona2, posibilidad=false, bolPlay=false, bolOptions=false;
+private boolean Active=true, Funciona, Funciona2, posibilidad=false, bolPlay=false, bolOptions=false;
 private MiHilo ElHilo;
+private JLabel txtLabel;
 private MovMapa OtroHilo;
 private Cuadrante cuadran;
 private AudioManager Musica;
@@ -42,6 +44,9 @@ private Point source=new Point(8,4);
 private MouseListener BotonPlayOpt;
 private WindowListener AjusteVentana;
 private FocusListener FocusThings;
+private PanelCombate PanComb;
+private JLabel gold;
+//private Soldier sl;
 private User us;
 private clsCombate c;
 
@@ -85,7 +90,7 @@ private clsCombate c;
 			@Override
 			public void focusLost(FocusEvent arg0) 
 			{
-				PPrincipal.requestFocus();
+				Focus();
 			}	
 		};
 		addFocusListener(FocusThings);
@@ -183,7 +188,6 @@ private clsCombate c;
 	
 	public void CargaJuego()
 	{
-		
 		pj=new PJPrincipal();
 		PPrincipal.add(pj.getPJ());
 		PPrincipal.setComponentZOrder(pj.getPJ(), 0);
@@ -191,55 +195,80 @@ private clsCombate c;
 		Cuad=new ArrayList<Cuadrante>();
 		cargadelmapa();
 		cargaInfo();
+		gold=new JLabel();
+        gold.setBounds(730, 25, 50, 50);
+        PPrincipal.add(gold);
+        gold.setText("gold:"+String.valueOf(us.getMoney()));
+        gold.setForeground(Color.RED);
+        PPrincipal.setComponentZOrder(gold, 0);
 		
-		addKeyListener(new KeyListener()
+		KL=new KeyListener()
+		{
+			@Override
+			public void keyPressed(KeyEvent e)
+			{
+				if(Active)
 				{
-					@Override
-					public void keyPressed(KeyEvent e)
-					{
-						event=null;
-						posibilidad=false;
-						
-						if(cont==1)event=e;
-						
-						if(Cuadrante.isMovimiento()==false)
-						{
-							pj.setMovimiento(true);
-							cont=1;
-							switch (e.getKeyCode()) {
-							case KeyEvent.VK_UP: {
-								pj.setMovSITUACION(clsConstantes.Moviendo_Arriba);
-								Cuadrante.setMovimiento(true);
-								break;
-							}
-							case KeyEvent.VK_DOWN: {
-								pj.setMovSITUACION(clsConstantes.Moviendo_Abajo);
-								Cuadrante.setMovimiento(true);
-								break;
-							}
-							case KeyEvent.VK_LEFT: {
-								pj.setMovSITUACION(clsConstantes.Moviendo_Izquierda);
-								Cuadrante.setMovimiento(true);
-								break;
-							}
-							case KeyEvent.VK_RIGHT: {
-								pj.setMovSITUACION(clsConstantes.Moviendo_Derecha);
-								Cuadrante.setMovimiento(true);
-								break;
-							}
-						}
-						}
+				event=null;
+				posibilidad=false;
+				
+				if(cont==1)event=e;
+				
+				if(Cuadrante.isMovimiento()==false)
+				{
+					pj.setMovimiento(true);
+					
+					switch (e.getKeyCode()) {
+					case KeyEvent.VK_UP: {
+						cont=1;
+						pj.setMovSITUACION(clsConstantes.Moviendo_Arriba);
+						Cuadrante.setMovimiento(true);
+						break;
 					}
-					@Override
-					public void keyReleased(KeyEvent arg0) 
-					{
-						posibilidad=true;
+					case KeyEvent.VK_DOWN: {
+						cont=1;
+						pj.setMovSITUACION(clsConstantes.Moviendo_Abajo);
+						Cuadrante.setMovimiento(true);
+						break;
 					}
+					case KeyEvent.VK_LEFT: {
+						cont=1;
+						pj.setMovSITUACION(clsConstantes.Moviendo_Izquierda);
+						Cuadrante.setMovimiento(true);
+						break;
+					}
+					case KeyEvent.VK_RIGHT: {
+						cont=1;
+						pj.setMovSITUACION(clsConstantes.Moviendo_Derecha);
+						Cuadrante.setMovimiento(true);
+						break;
+					}
+				}
+				}
+				}
+				if(CuadActual.getX()==0&&CuadActual.getY()==0&&source.getX()==11&&source.y==7)
+				{
+					if(pj.mirandoArriba)
+					{
+					if(KeyEvent.VK_T==e.getKeyCode())
+					{
+						Hablar_con_el_tio(us);
+						gold.setText("gold:"+String.valueOf(us.getMoney()));
+					}
+					}
+				}
+			}
+			@Override
+			public void keyReleased(KeyEvent arg0) 
+			{
+				posibilidad=true;
+			}
 
-					@Override
-					public void keyTyped(KeyEvent arg0) {}
-			
-				});
+			@Override
+			public void keyTyped(KeyEvent arg0) {}
+	
+		};
+		addKeyListener(KL);
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e1){}
@@ -262,6 +291,8 @@ private clsCombate c;
 			
 			while(Funciona2)
 			{
+				if(Active)
+				{
 				if(pj.isMovimiento()==true)
 				{
 					
@@ -284,6 +315,7 @@ private clsCombate c;
 					{
 						pj.IconDown();
 					}
+				}
 				}
 				try 
 				{
@@ -308,6 +340,8 @@ private clsCombate c;
 			
 			while(Funciona)
 			{
+				if(Active)
+				{
 				if(Cuadrante.isMovimiento()==true)
 				{
 					if(pj.getMovSITUACION()==clsConstantes.Moviendo_Izquierda)
@@ -332,7 +366,14 @@ private clsCombate c;
 									Thread.sleep(6);
 								}catch (Exception e) {}
 							}
-							
+							c.aumentarProb();
+							if(c.IsCombat())
+							{
+								CambioPantallaJaC();
+								pj.setIntentoMovSITUACION("STOP");
+								pj.setMovSITUACION("");
+								cont=0;
+							}
 							if(pj.getIntentoMovSITUACION()=="STOP")
 							{
 								if(posibilidad)
@@ -385,6 +426,14 @@ private clsCombate c;
 								{
 									Thread.sleep(6);
 								}catch (Exception e) {}
+							}
+							c.aumentarProb();
+							if(c.IsCombat())
+							{
+								CambioPantallaJaC();
+								pj.setIntentoMovSITUACION("STOP");
+								pj.setMovSITUACION("");
+								cont=0;
 							}
 							if(pj.getIntentoMovSITUACION()=="STOP")
 							{
@@ -439,6 +488,14 @@ private clsCombate c;
 									Thread.sleep(6);
 								}catch (Exception e) {}
 							}
+							c.aumentarProb();
+							if(c.IsCombat())
+							{
+								CambioPantallaJaC();
+								pj.setIntentoMovSITUACION("STOP");
+								pj.setMovSITUACION("");
+								cont=0;
+							}
 							if(pj.getIntentoMovSITUACION()=="STOP")
 							{
 								if(posibilidad)
@@ -488,6 +545,14 @@ private clsCombate c;
 								
 								catch (Exception e) {}
 							}
+							c.aumentarProb();
+							if(c.IsCombat())
+							{
+								CambioPantallaJaC();
+								pj.setIntentoMovSITUACION("STOP");
+								pj.setMovSITUACION("");
+								cont=0;
+							}
 							if(pj.getIntentoMovSITUACION()=="STOP")
 							{
 								if(posibilidad)
@@ -516,6 +581,7 @@ private clsCombate c;
 							cont=0;
 						}
 					}
+				}
 				}
 				try 
 				{
@@ -546,9 +612,12 @@ private clsCombate c;
 			j.addpiezas();
 			Cuad.add(j);
 		}
-		
 		for(Cuadrante z:Cuad)
 		{
+			if(0==z.getNumCuadrante().x&&0==z.getNumCuadrante().y)
+			{
+//				sl=z.sl;
+			}
 			PPrincipal.add(z);
 		}
 
@@ -574,6 +643,8 @@ private clsCombate c;
 	}
 	private void IntentoMovimiento()
 	{
+		try
+		{
 		if(KeyEvent.VK_RIGHT==event.getKeyCode())
 		{
 			pj.setIntentoMovSITUACION(clsConstantes.Moviendo_Derecha);
@@ -592,6 +663,11 @@ private clsCombate c;
 		if(KeyEvent.VK_UP==event.getKeyCode())
 		{
 			pj.setIntentoMovSITUACION(clsConstantes.Moviendo_Arriba);
+		}
+		}
+		catch(NullPointerException ex)
+		{
+			
 		}
 	}
 	private void comprobacion()
@@ -644,6 +720,46 @@ private clsCombate c;
 			}
 		}
 	}
+	private void Focus()
+	{
+		this.requestFocus();
+	}
 	
+	public void CambioPantallaCaJ()
+	{
+		this.remove(PanComb);
+		PPrincipal.setVisible(true);
+		Cuadrante.setMovimiento(false);
+		Active=true;
+		this.setContentPane(PPrincipal);
+		PPrincipal.repaint();
+		this.requestFocus();
+		gold.setText("gold:"+String.valueOf(us.getMoney()));
+		c.resetProb();
+	}
+	public void CambioPantallaJaC()
+	{
+		PPrincipal.setVisible(false);
+		Active=false;
+		PanComb=new PanelCombate(us,c.Contrincante);
+		this.setContentPane(PanComb);
+		JLabel Fondo=c.Contrincante.getLbl();
+        PanComb.add(Fondo);
+		PanComb.repaint();
+		PanComb.requestFocus();
+	}
+	public void Hablar_con_el_tio(User usuario )
+    {
+
+        if(usuario.getMoney()>=100)
+        { 
+            usuario.lvlup();
+        }
+        else
+        {
+        }
+        
+        PPrincipal.repaint();
+    }
 
 }

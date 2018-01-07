@@ -3,7 +3,7 @@ package LN;
 public abstract class clsIA 
 {
 	private String nombre;
-	private final int VidaTotal;
+	public final int VidaTotal;
 	private int vida;
 	private int ataque;
 	private int velocidad;
@@ -22,7 +22,13 @@ public abstract class clsIA
 		this.armadura = armadura;
 		this.oro = oro;
 		this.probabilidad = probabilidad;
+		this.ID=ID;
 	}
+	
+	public int getVidaTotal() {
+		return VidaTotal;
+	}
+
 	public String getNombre() {
 		return nombre;
 	}

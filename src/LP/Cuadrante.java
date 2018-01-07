@@ -16,12 +16,25 @@ public class Cuadrante extends JPanel
 	private Point numCuadrante;
 	private PiezaMapa[][] Piezas;
 	private Point pActual;
+	public Soldier sl;
 	
 	public Cuadrante(String[][] a)
 	{
 		setLayout(null);
 		movimiento=false;
 		Piezas=clsArrayC.ConversorJLabel(a);
+		try
+		{
+		if(Integer.parseInt(a[0][15])==0&&Integer.parseInt(a[1][15])==0)
+		{
+			sl=new Soldier();
+			this.add(sl);
+			this.setComponentZOrder(sl,0);
+		}
+		}
+		catch(NumberFormatException ex)
+		{
+		}
 		if(a[0][15].equals("X"))
 		{
 			numCuadrante=PointMar();

@@ -16,7 +16,7 @@ public class PantReg extends JFrame{
 
 	private static final long serialVersionUID = 1L;
 	
-	private static PantallaPrincipal MiPantalla;
+	public static PantallaPrincipal MiPantalla;
 	static PantReg PR;
 	JLabel Nombre;
 	JTextField nombretxt;
